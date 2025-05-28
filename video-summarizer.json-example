@@ -1,0 +1,8 @@
+{
+  "prompts": {
+    "short_summary": "Provide a concise summary of this video transcript in 2-3 sentences, highlighting the main topic and key takeaways.",
+    "detailed_summary": "Analyze this video transcript and provide a comprehensive summary that includes: 1) Main topics discussed, 2) Key points and insights, 3) Important quotes or specific mentions, 4) Any actionable items or conclusions. Structure your response with clear headings and bullet points where appropriate."
+  },
+  "context_size": 128000,
+  "model": "gpt-4"
+}

@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "video-summarizer"
+version = "0.1.0"
+description = "A video summarization tool using Venice API"
+authors = ["Juraj Bednar <juraj@bednar.io>"]
+packages = [{include = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+langchain = "^0.3.25"
+langchain-openai = "^0.3.18"
+
+[tool.poetry.scripts]
+video-summarizer = "src.main:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
