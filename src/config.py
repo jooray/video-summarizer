@@ -6,7 +6,8 @@ class Config:
         self.config_path = config_path
         self.default_prompts = {
             "short_summary": "Provide a concise summary of the video.",
-            "detailed_summary": "Provide a detailed summary of the video, including key points and specific mentions."
+            "detailed_summary": "Provide a detailed summary of the video, including key points and specific mentions.",
+            "merge_summary": "Merge the following section summaries into a cohesive, well-structured detailed summary. Eliminate redundancy, organize information logically with clear headings, and ensure smooth transitions between sections. Maintain all important details while creating a unified narrative."
         }
         self.default_context_size = 128000
         self.default_model_name = "gpt-3.5-turbo"
@@ -32,6 +33,6 @@ class Config:
 
     def get_model_name(self):
         return self.config.get("model", self.default_model_name)
-    
+
     def get_api_base(self):
         return self.config.get("api_base", self.default_api_base)

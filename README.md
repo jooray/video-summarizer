@@ -63,7 +63,8 @@ poetry run video-summarizer transcript.txt --config /path/to/custom-config.json
 # Override prompts via command line
 poetry run video-summarizer transcript.txt \
   --short_prompt "Summarize this video in one sentence" \
-  --detailed_prompt "Provide a bullet-point summary with timestamps"
+  --detailed_prompt "Provide a bullet-point summary with timestamps" \
+  --merge_prompt "Combine these summaries into a unified report"
 
 # Combine custom config and prompt overrides
 poetry run video-summarizer transcript.txt \
@@ -81,6 +82,7 @@ The tool uses a JSON configuration file to customize behavior. By default, it lo
 |--------|------|---------|-------------|
 | `prompts.short_summary` | string | Basic short summary prompt | Prompt for generating concise summaries |
 | `prompts.detailed_summary` | string | Basic detailed summary prompt | Prompt for generating comprehensive summaries |
+| `prompts.merge_summary` | string | Basic merge prompt | Prompt for merging multiple chunk summaries into a cohesive detailed summary |
 | `context_size` | integer | 128000 | Maximum tokens per chunk for processing |
 | `model` | string | "mistral-31-24b" | Model name to use for summarization |
 
@@ -90,7 +92,8 @@ The tool uses a JSON configuration file to customize behavior. By default, it lo
 {
   "prompts": {
     "short_summary": "Provide a concise summary of this video transcript in 2-3 sentences, highlighting the main topic and key takeaways.",
-    "detailed_summary": "Analyze this video transcript and provide a comprehensive summary that includes: 1) Main topics discussed, 2) Key points and insights, 3) Important quotes or specific mentions, 4) Any actionable items or conclusions. Structure your response with clear headings and bullet points where appropriate."
+    "detailed_summary": "Analyze this video transcript and provide a comprehensive summary that includes: 1) Main topics discussed, 2) Key points and insights, 3) Important quotes or specific mentions, 4) Any actionable items or conclusions. Structure your response with clear headings and bullet points where appropriate.",
+    "merge_summary": "Merge the following section summaries into a cohesive, well-structured detailed summary. Eliminate redundancy, organize information logically with clear headings, and ensure smooth transitions between sections. Maintain all important details while creating a unified narrative."
   },
   "context_size": 128000,
   "model": "mistral-31-24b"
@@ -110,6 +113,7 @@ Arguments:
 Options:
   --short_prompt TEXT      Custom prompt for short summary
   --detailed_prompt TEXT   Custom prompt for detailed summary
+  --merge_prompt TEXT      Custom prompt for merging chunk summaries
   --config PATH            Path to custom configuration file
   --help                   Show this message and exit.
 ```

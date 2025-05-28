@@ -11,6 +11,7 @@ def main():
                        default=os.path.expanduser("~/.video-summarizer.json"))
     parser.add_argument("--short_prompt", help="Custom short summary prompt")
     parser.add_argument("--detailed_prompt", help="Custom detailed summary prompt")
+    parser.add_argument("--merge_prompt", help="Custom merge summary prompt")
 
     args = parser.parse_args()
 
@@ -29,6 +30,8 @@ def main():
         prompts['short_summary'] = args.short_prompt
     if args.detailed_prompt:
         prompts['detailed_summary'] = args.detailed_prompt
+    if args.merge_prompt:
+        prompts['merge_summary'] = args.merge_prompt
 
     api_key = os.getenv('VENICE_API_KEY')
     if not api_key:

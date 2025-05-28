@@ -28,10 +28,12 @@ class Summarizer:
         chunks = self.split_transcript()
         short_summary = self.generate_summary(chunks[0], self.prompts['short_summary'])
 
-        detailed_summary = []
-        for chunk in chunks:
-            detailed_summary.append(self.generate_summary(chunk, self.prompts['detailed_summary']))
+        if len(chunks) == 1:
+            detailed_summary = self.generate_summary(chunks[0], self.prompts['detailed_summary'])
+        else:
+            chunk_summaries = []
+            for chunk in chunks:
+                chunk_summaries.append(self.generate_summary(chunk, self.prompts['detailed_summary']))
+            detailed_summary = self.generate_summary("\n\n".join(chunk_summaries), self.prompts['merge_summary'])
 
-        consolidated_detailed_summary = "\n\n".join(detailed_summary)
-
-        return short_summary, consolidated_detailed_summary
+        return short_summary, detailed_summary
