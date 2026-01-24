@@ -50,17 +50,16 @@ class Config:
     def get_model_provider(self):
         return self.config.get("model_provider", self.default_model_provider)
 
-    def get_context_size(self):
+    def _get_provider_default(self, key):
+        """Get provider-specific default value for a configuration key."""
         provider = self.get_model_provider()
-        default = self.provider_defaults.get(provider, self.provider_defaults["venice"])["context_size"]
-        return self.config.get("context_size", default)
+        return self.provider_defaults.get(provider, self.provider_defaults["venice"])[key]
+
+    def get_context_size(self):
+        return self.config.get("context_size", self._get_provider_default("context_size"))
 
     def get_model_name(self):
-        provider = self.get_model_provider()
-        default = self.provider_defaults.get(provider, self.provider_defaults["venice"])["model"]
-        return self.config.get("model", default)
+        return self.config.get("model", self._get_provider_default("model"))
 
     def get_api_base(self):
-        provider = self.get_model_provider()
-        default = self.provider_defaults.get(provider, self.provider_defaults["venice"])["api_base"]
-        return self.config.get("api_base", default)
+        return self.config.get("api_base", self._get_provider_default("api_base"))
