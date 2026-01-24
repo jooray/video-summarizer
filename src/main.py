@@ -33,9 +33,25 @@ def main():
     if args.merge_prompt:
         prompts['merge_summary'] = args.merge_prompt
 
-    api_key = os.getenv('VENICE_API_KEY')
-    if not api_key:
-        print("Error: VENICE_API_KEY environment variable not set")
+    # Get API key based on provider
+    provider = config.get_model_provider()
+    api_key = None
+    
+    if provider == "venice":
+        api_key = os.getenv('VENICE_API_KEY')
+        if not api_key:
+            print("Error: VENICE_API_KEY environment variable not set")
+            sys.exit(1)
+    elif provider == "openai":
+        api_key = os.getenv('OPENAI_API_KEY')
+        if not api_key:
+            print("Error: OPENAI_API_KEY environment variable not set")
+            sys.exit(1)
+    elif provider == "ollama":
+        # Ollama typically doesn't require an API key, but allow optional override
+        api_key = os.getenv('OLLAMA_API_KEY', 'ollama')
+    else:
+        print(f"Error: Unknown model_provider '{provider}'. Supported providers: venice, openai, ollama")
         sys.exit(1)
 
     summarizer = Summarizer(

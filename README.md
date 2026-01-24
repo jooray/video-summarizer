@@ -1,6 +1,6 @@
 # Video Summarizer
 
-AI-powered video transcript summarizer using Venice AI API (you can alternatively use different API that is OpenAI compatible). This tool processes video transcripts and generates both concise and detailed summaries.
+AI-powered video transcript summarizer supporting multiple AI providers (Venice AI, Ollama, OpenAI). This tool processes video transcripts and generates both concise and detailed summaries.
 
 <!-- jooray-links:start -->
 ### More from me
@@ -20,13 +20,21 @@ I write about building things on [my blog](https://juraj.bednar.io/en/blog-en/).
 
 To get the transcripts, use [whisper-file](https://gist.github.com/jooray/22559480fecbe38444080c208b715cce) or [yt-whisper](https://gist.github.com/jooray/b7266366dbc2f0c162542cf9927768f9).
 
+## Supported AI Providers
+
+| Provider | Privacy | Cost | Setup Difficulty | API Key Required |
+|----------|---------|------|------------------|------------------|
+| **Ollama** | Local/Private | Free | Easy | No |
+| **Venice AI** | Cloud | Paid | Easy | Yes |
+| **OpenAI** | Cloud | Paid | Easy | Yes |
+
 ## Installation
 
 ### Prerequisites
 
 - Python 3.11 or higher
 - Poetry (for dependency management)
-- Venice AI API key
+- An API key for your chosen provider (Venice AI or OpenAI), or Ollama installed locally
 
 ### Setup
 
@@ -41,7 +49,34 @@ To get the transcripts, use [whisper-file](https://gist.github.com/jooray/225594
    poetry install
    ```
 
-3. **Set up your Venice AI API key:**
+3. **Choose and configure your AI provider:**
+
+   #### Option 1: Ollama (Local, Private, Free)
+   
+   **Install Ollama:**
+   ```bash
+   # On macOS or Linux
+   curl -fsSL https://ollama.com/install.sh | sh
+   
+   # On Windows, download from https://ollama.com/download
+   ```
+   
+   **Pull a model:**
+   ```bash
+   # For general use (4GB RAM required)
+   ollama pull llama2
+   
+   # For better quality (8GB RAM required)
+   ollama pull llama3.1
+   
+   # For highest quality (48GB RAM required)
+   ollama pull llama3.3:70b
+   ```
+   
+   **No API key needed for Ollama!**
+
+   #### Option 2: Venice AI (Cloud, Paid)
+   
    ```bash
    export VENICE_API_KEY="your-api-key-here"
    ```
@@ -52,10 +87,22 @@ To get the transcripts, use [whisper-file](https://gist.github.com/jooray/225594
    source ~/.zshrc
    ```
 
-4. **Create configuration file (optional):**
+   #### Option 3: OpenAI (Cloud, Paid)
+   
+   ```bash
+   export OPENAI_API_KEY="your-api-key-here"
+   ```
+   
+   Or add it to your shell profile:
+   ```bash
+   echo 'export OPENAI_API_KEY="your-api-key-here"' >> ~/.zshrc
+   source ~/.zshrc
+   ```
+
+4. **Create configuration file:**
    ```bash
    cp video-summarizer.json-example ~/.video-summarizer.json
-   # Edit the config file to customize prompts and settings
+   # Edit the config file to select your provider and customize settings
    ```
 
 ## Usage
@@ -96,32 +143,92 @@ The tool uses a JSON configuration file to customize behavior. By default, it lo
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `prompts.short_summary` | string | Basic short summary prompt | Prompt for generating concise summaries |
-| `prompts.detailed_summary` | string | Basic detailed summary prompt | Prompt for generating comprehensive summaries |
-| `prompts.merge_summary` | string | Basic merge prompt | Prompt for merging multiple chunk summaries into a cohesive detailed summary |
-| `context_size` | integer | 128000 | Maximum tokens per chunk for processing |
-| `model` | string | "mistral-31-24b" | Model name to use for summarization |
+| `model_provider` | string | "venice" | AI provider to use: "venice", "ollama", or "openai" |
+| `model` | string | Provider-specific | Model name to use for summarization |
+| `context_size` | integer | Provider-specific | Maximum tokens per chunk for processing |
+| `api_base` | string | Provider-specific | API base URL (auto-configured per provider) |
+| `prompts.short_summary` | string | Default prompt | Prompt for generating concise summaries |
+| `prompts.detailed_summary` | string | Default prompt | Prompt for generating comprehensive summaries |
+| `prompts.merge_summary` | string | Default prompt | Prompt for merging multiple chunk summaries |
 
-### Example Configuration
+### Provider-Specific Defaults
 
+| Provider | Default Model | Default Context Size | Default API Base |
+|----------|---------------|---------------------|------------------|
+| **Venice AI** | llama-3.3-70b | 128,000 | https://api.venice.ai/api/v1 |
+| **Ollama** | llama2 | 4,096 | http://localhost:11434/v1 |
+| **OpenAI** | gpt-4 | 128,000 | https://api.openai.com/v1 |
+
+### Example Configurations
+
+#### Venice AI Configuration
 ```json
 {
-  "prompts": {
-    "short_summary": "Provide a concise summary of this video transcript in 2-3 sentences, highlighting the main topic and key takeaways.",
-    "detailed_summary": "Analyze this video transcript and provide a comprehensive summary that includes: 1) Main topics discussed, 2) Key points and insights, 3) Important quotes or specific mentions, 4) Any actionable items or conclusions. Structure your response with clear headings and bullet points where appropriate.",
-    "merge_summary": "Merge the following section summaries into a cohesive, well-structured detailed summary. Eliminate redundancy, organize information logically with clear headings, and ensure smooth transitions between sections. Maintain all important details while creating a unified narrative."
-  },
+  "model_provider": "venice",
+  "model": "llama-3.3-70b",
   "context_size": 128000,
-  "model": "mistral-31-24b"
+  "api_base": "https://api.venice.ai/api/v1",
+  "prompts": {
+    "short_summary": "Provide a concise summary of this video transcript in 2-3 sentences.",
+    "detailed_summary": "Provide a comprehensive summary with key points and insights.",
+    "merge_summary": "Merge the following summaries into a cohesive detailed summary."
+  }
 }
 ```
+
+#### Ollama Configuration
+```json
+{
+  "model_provider": "ollama",
+  "model": "llama2",
+  "context_size": 4096,
+  "api_base": "http://localhost:11434/v1",
+  "prompts": {
+    "short_summary": "Provide a concise summary of this video transcript in 2-3 sentences.",
+    "detailed_summary": "Provide a comprehensive summary with key points and insights.",
+    "merge_summary": "Merge the following summaries into a cohesive detailed summary."
+  }
+}
+```
+
+**Ollama Model Context Sizes:**
+- `llama2`: 4,096 tokens
+- `llama3.1`: 128,000 tokens  
+- `llama3.3:70b`: 128,000 tokens
+- `mistral`: 8,192 tokens
+- `mixtral`: 32,768 tokens
+
+**Note:** Adjust `context_size` based on the model you're using with Ollama.
+
+#### OpenAI Configuration
+```json
+{
+  "model_provider": "openai",
+  "model": "gpt-4",
+  "context_size": 128000,
+  "api_base": "https://api.openai.com/v1",
+  "prompts": {
+    "short_summary": "Provide a concise summary of this video transcript in 2-3 sentences.",
+    "detailed_summary": "Provide a comprehensive summary with key points and insights.",
+    "merge_summary": "Merge the following summaries into a cohesive detailed summary."
+  }
+}
+```
+
+### Environment Variables
+
+| Variable | Required For | Description |
+|----------|-------------|-------------|
+| `VENICE_API_KEY` | Venice AI | Your Venice AI API key |
+| `OPENAI_API_KEY` | OpenAI | Your OpenAI API key |
+| `OLLAMA_API_KEY` | Ollama (optional) | Optional API key for Ollama (usually not needed) |
 
 ## Command Line Options
 
 ```
 Usage: video-summarizer [OPTIONS] TRANSCRIPT_PATH
 
-  Summarize video transcripts using Venice API (or another OpenAI compatible API).
+  Summarize video transcripts using your configured AI provider (Venice AI, Ollama, or OpenAI).
 
 Arguments:
   TRANSCRIPT_PATH  Path to the video transcript file  [required]
@@ -130,7 +237,7 @@ Options:
   --short_prompt TEXT      Custom prompt for short summary
   --detailed_prompt TEXT   Custom prompt for detailed summary
   --merge_prompt TEXT      Custom prompt for merging chunk summaries
-  --config PATH            Path to custom configuration file
+  --config PATH            Path to custom configuration file (default: ~/.video-summarizer.json)
   --help                   Show this message and exit.
 ```
 

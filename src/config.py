@@ -11,28 +11,56 @@ class Config:
         }
         self.default_context_size = 128000
         self.default_model_name = "gpt-3.5-turbo"
-        self.default_api_base = "https://api.venice.ai/api/v1"
+        self.default_model_provider = "venice"
+        self.provider_defaults = {
+            "venice": {
+                "api_base": "https://api.venice.ai/api/v1",
+                "model": "llama-3.3-70b",
+                "context_size": 128000
+            },
+            "ollama": {
+                "api_base": "http://localhost:11434/v1",
+                "model": "llama2",
+                "context_size": 4096
+            },
+            "openai": {
+                "api_base": "https://api.openai.com/v1",
+                "model": "gpt-4",
+                "context_size": 128000
+            }
+        }
         self.config = self.load_config()
 
     def load_config(self):
         if Path(self.config_path).exists():
             with open(self.config_path, 'r') as f:
                 return json.load(f)
+        # Return defaults for Venice provider
         return {
             "prompts": self.default_prompts,
-            "context_size": self.default_context_size,
-            "model": self.default_model_name,
-            "api_base": self.default_api_base
+            "model_provider": self.default_model_provider,
+            "context_size": self.provider_defaults["venice"]["context_size"],
+            "model": self.provider_defaults["venice"]["model"],
+            "api_base": self.provider_defaults["venice"]["api_base"]
         }
 
     def get_prompts(self):
         return self.config.get("prompts", self.default_prompts)
 
+    def get_model_provider(self):
+        return self.config.get("model_provider", self.default_model_provider)
+
     def get_context_size(self):
-        return self.config.get("context_size", self.default_context_size)
+        provider = self.get_model_provider()
+        default = self.provider_defaults.get(provider, self.provider_defaults["venice"])["context_size"]
+        return self.config.get("context_size", default)
 
     def get_model_name(self):
-        return self.config.get("model", self.default_model_name)
+        provider = self.get_model_provider()
+        default = self.provider_defaults.get(provider, self.provider_defaults["venice"])["model"]
+        return self.config.get("model", default)
 
     def get_api_base(self):
-        return self.config.get("api_base", self.default_api_base)
+        provider = self.get_model_provider()
+        default = self.provider_defaults.get(provider, self.provider_defaults["venice"])["api_base"]
+        return self.config.get("api_base", default)
