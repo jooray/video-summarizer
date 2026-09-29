@@ -2,6 +2,22 @@
 
 AI-powered video transcript summarizer using Venice AI API (you can alternatively use different API that is OpenAI compatible). This tool processes video transcripts and generates both concise and detailed summaries.
 
+<!-- jooray-links:start -->
+### More from me
+
+**Related projects**
+
+- [venice-frontend](https://github.com/jooray/venice-frontend): alternative Venice.ai front-end for image, video and chat
+- [venice-image](https://github.com/jooray/venice-image): generate images with the Venice API from the command line
+- [hermes-venice-model-switcher](https://github.com/jooray/hermes-venice-model-switcher): DIEM-aware model switcher for Hermes Agent on Venice
+- [venice-e2ee-proxy](https://github.com/jooray/venice-e2ee-proxy): local proxy adding end-to-end encryption to Venice requests
+- [hermes-firewall](https://github.com/jooray/hermes-firewall): prompt-injection gate for Hermes Agent
+
+**Full project showcase:** Part of [Venice Tools](https://juraj.bednar.io/showcase/#AI-05) in my project showcase, or [all my projects](https://juraj.bednar.io/showcase/).
+
+I write about building things on [my blog](https://juraj.bednar.io/en/blog-en/). I also wrote a cypherpunk novel, [Tamers of Entropy](https://tamersofentropy.net/), and there is a [trailer](https://tamersofentropy.net/#trailer).
+<!-- jooray-links:end -->
+
 To get the transcripts, use [whisper-file](https://gist.github.com/jooray/22559480fecbe38444080c208b715cce) or [yt-whisper](https://gist.github.com/jooray/b7266366dbc2f0c162542cf9927768f9).
 
 ## Installation
