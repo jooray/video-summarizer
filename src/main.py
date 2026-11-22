@@ -4,6 +4,26 @@ import sys
 from .config import Config
 from .summarizer import Summarizer
 
+# ChatOpenAI refuses an empty key. Ollama never checks it, so any non-empty
+# placeholder will do when no OLLAMA_API_KEY is set.
+NO_KEY_PLACEHOLDER = "ollama"
+
+
+def get_api_key(config: Config) -> str:
+    """Return the API key for the configured provider, or exit with a hint."""
+    env_var = config.get_api_key_env()
+    api_key = os.getenv(env_var)
+
+    if api_key:
+        return api_key
+    if config.is_api_key_required():
+        print(f"Error: {env_var} environment variable not set "
+              f"(required for model_provider '{config.get_model_provider()}')")
+        print(f"       export {env_var}=\"your-api-key-here\"")
+        sys.exit(1)
+    return NO_KEY_PLACEHOLDER
+
+
 def main():
     parser = argparse.ArgumentParser(description="Video transcript summarizer")
     parser.add_argument("transcript_path", help="Path to the transcript file")
@@ -22,7 +42,11 @@ def main():
     with open(args.transcript_path, 'r') as f:
         transcript = f.read()
 
-    config = Config(args.config)
+    try:
+        config = Config(args.config)
+    except ValueError as e:
+        print(f"Error: {e}")
+        sys.exit(1)
 
     # Override prompts if provided via command line
     prompts = config.get_prompts()
@@ -33,10 +57,7 @@ def main():
     if args.merge_prompt:
         prompts['merge_summary'] = args.merge_prompt
 
-    api_key = os.getenv('VENICE_API_KEY')
-    if not api_key:
-        print("Error: VENICE_API_KEY environment variable not set")
-        sys.exit(1)
+    api_key = get_api_key(config)
 
     summarizer = Summarizer(
         transcript=transcript,

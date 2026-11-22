@@ -1,5 +1,5 @@
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.schema import HumanMessage
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_core.messages import HumanMessage
 from .chat_venice_api import ChatVeniceAPI
 
 class Summarizer:
