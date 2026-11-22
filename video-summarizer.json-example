@@ -1,28 +1,26 @@
 {
-  "_comment": "Video Summarizer Configuration - Choose your AI provider",
-  "_comment_providers": "Supported providers: venice, ollama, openai",
-  
+  "_comment": "Copy to ~/.video-summarizer.json. The values below are the Venice AI defaults. Omit model_provider entirely and you get Venice, so existing configs keep working.",
   "model_provider": "venice",
-  "model": "llama-3.3-70b",
+  "model": "deepseek-v4-flash",
   "context_size": 128000,
   "api_base": "https://api.venice.ai/api/v1",
-  
-  "_comment_ollama": "For local Ollama, use the following configuration:",
+
+  "_comment_ollama": "Local Ollama: no API key needed. Use this block instead of the venice keys above. context_size is characters (roughly a quarter of it in tokens), so keep it inside the context the model is served with.",
   "_ollama_example": {
     "model_provider": "ollama",
-    "model": "llama2",
-    "context_size": 4096,
+    "model": "gemma4:12b",
+    "context_size": 8192,
     "api_base": "http://localhost:11434/v1"
   },
-  
-  "_comment_openai": "For OpenAI, use the following configuration:",
+
+  "_comment_openai": "OpenAI: needs OPENAI_API_KEY.",
   "_openai_example": {
     "model_provider": "openai",
-    "model": "gpt-4",
+    "model": "gpt-4o-mini",
     "context_size": 128000,
     "api_base": "https://api.openai.com/v1"
   },
-  
+
   "prompts": {
     "short_summary": "Provide a concise summary of this video transcript in 2-3 sentences, highlighting the main topic and key takeaways.",
     "detailed_summary": "Analyze this video transcript and provide a comprehensive summary that includes: 1) Main topics discussed, 2) Key points and insights, 3) Important quotes or specific mentions, 4) Any actionable items or conclusions. Structure your response with clear headings and bullet points where appropriate.",
